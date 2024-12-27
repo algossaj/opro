@@ -233,7 +233,7 @@ def get_normalized_prediction(prediction: str,
 
   answer_indicated = False
   for answer_delimiter in DELIMITERS_FOR_ANSWER_BEHIND:
-    if answer_delimiter.lower() in prediction_parsed:
+    if (answer_delimiter.lower() in prediction_parsed):
       prediction_parsed = prediction_parsed.split(answer_delimiter.lower())[-1]
       answer_indicated = True
 
@@ -458,11 +458,9 @@ def number_included_accuracy_list(
 
     # If answer is not a number, then look for exact match.
     if not normalization_result.treat_as_number:
-      correct_list.append(
-          normalization_result.target == normalization_result.prediction)
-
+      correct = normalization_result.target == normalization_result.prediction
     else:  # If the target is a number, then compare numerically.
-      correct = False  # pylint: disable=unused-variable
+      correct = False
       try:
         prediction_parsed_float = round(
             float(normalization_result.prediction),
@@ -474,7 +472,9 @@ def number_included_accuracy_list(
         correct = False
       except IndexError:
         correct = False
-      correct_list.append(correct)
+
+    # Invert the correctness
+    correct_list.append(not correct)
   return correct_list
 
 
