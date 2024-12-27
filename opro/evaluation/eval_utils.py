@@ -487,13 +487,9 @@ def _get_accuracy(
   )
   if treat_include_as_correct:
     accuracy = int(bool(accuracy) or true_answer_included_in_pred_answer)
-  return accuracy
-
-  # Alternatively, we may only check if the true_answer string is in the bag of
-  # words of pred_answer, to avoid false negatives like when
-  # true_answer == '(A)' and pred_answer == '(A) <some explanations>'.
-  # The code would be "if true_answer.lower() in pred_answer.lower().split():".
-  # However, this may incur false positives, so we don't adopt it for now.
+  
+  # Invert the accuracy
+  return 1 - accuracy
 
 
 def get_accuracy_of_list(
