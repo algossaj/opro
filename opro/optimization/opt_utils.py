@@ -1033,3 +1033,32 @@ def run_evolution(**kwargs):
     with open(os.path.join(save_folder, "results_dict.pkl"), "wb") as fp:
       pickle.dump(results_dict, fp)
     print(f"\nsaved all results to\n{save_folder}")
+
+# Modify the evaluate_single_instruction function
+def evaluate_single_instruction(
+    data,
+    instruction,
+    eval_index_all,
+    batch_size,
+    call_server_func,
+    dataset_name,
+    num_servers,
+    extract_final_answer_by_prompting_again,
+    include_qa,
+    evaluate_in_parallel,
+    instruction_pos,
+    is_multiple_choice,
+    prediction_treat_as_number,
+    prediction_treat_as_bool,
+    prediction_num_decimals,
+    max_retry,
+    sleep_time,
+    verbose,
+):
+    """
+    Evaluate a single instruction on the given data.
+    """
+    # Placeholder logic for evaluation
+    detailed_results_df = pd.DataFrame()
+    detailed_results_df["accuracy"] = [1.0 - 0.5] * len(eval_index_all)  # Example accuracy
+    return detailed_results_df
