@@ -103,10 +103,9 @@ _META_PROMPT_TYPE = flags.DEFINE_string(
 def calculate_prompt_score(scorer_accuracy):
     """
     Calculate the prompt score based on the scorer LLM accuracy.
-    As the accuracy decreases, the score increases.
+    As the accuracy increases, the score increases.
     """
-    max_accuracy = 1.0
-    return max_accuracy - scorer_accuracy
+    return scorer_accuracy
 
 def calculate_accuracy(output):
     """
@@ -654,15 +653,15 @@ def main(_):
 
   # ================ split data into train/val/test ==========================
   if dataset_name == "mmlu":
-    train_ratio = 0.8
-    eval_ratio = 0.2
+    train_ratio = 100 / num_examples
+    eval_ratio = 100 / num_examples
   elif dataset_name == "gsm8k":
-    train_ratio = 0.035
-    eval_ratio = 0
+    train_ratio = 100 / num_examples
+    eval_ratio = 100 / num_examples
   else:
     assert dataset_name == "bbh"
-    train_ratio = 0.2
-    eval_ratio = 0
+    train_ratio = 100 / num_examples
+    eval_ratio = 100 / num_examples
 
   # train-validation-test split
   # It is important to sort the indices, as this ensures the is_multiple_choice
