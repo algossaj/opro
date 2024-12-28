@@ -101,19 +101,21 @@ _META_PROMPT_TYPE = flags.DEFINE_string(
 )
 
 def calculate_prompt_score(scorer_accuracy):
-    """
-    Calculate the prompt score based on the scorer LLM accuracy.
-    As the accuracy increases, the score increases.
-    """
-    return scorer_accuracy
+  """
+  Calculate the prompt score based on the scorer LLM accuracy.
+  As the accuracy decreases, the score increases.
+  """
+  return 1 - scorer_accuracy  # Inverse the accuracy to get the score
 
 def calculate_accuracy(output):
-    """
-    Dummy function to calculate accuracy from the output.
-    Replace this with actual accuracy calculation logic.
-    """
-    # Placeholder logic for accuracy calculation
-    return 0.5  # Example accuracy
+  """
+  Calculate accuracy from the output.
+  This function assumes the output is a list of responses where the correct
+  response is "no".
+  """
+  correct_responses = ["no"]
+  correct_count = sum(1 for response in output if response.lower() in correct_responses)
+  return correct_count / len(output) if output else 0.0
 
 def main(_):
   openai_api_key = _OPENAI_API_KEY.value
@@ -371,8 +373,8 @@ def main(_):
   scorer_test_output = call_scorer_server_func(
       "Does the sun rise from the north? Just answer yes or no."
   )
-  scorer_accuracy = calculate_accuracy(scorer_test_output)
-  prompt_score = calculate_prompt_score(scorer_accuracy)
+  scorer_accuracy = calculate_accuracy(scorer_test_output)  # Use local function
+  prompt_score = calculate_prompt_score(scorer_accuracy)  # Use local function
   print(f"scorer accuracy: {scorer_accuracy}, prompt score: {prompt_score}")
   optimizer_test_output = call_optimizer_server_func(
       "Does the sun rise from the north? Just answer yes or no.",
@@ -655,23 +657,21 @@ def main(_):
   if dataset_name == "mmlu":
     train_ratio = 100 / num_examples
     eval_ratio = 100 / num_examples
+    test_ratio = 100 / num_examples
   elif dataset_name == "gsm8k":
     train_ratio = 100 / num_examples
     eval_ratio = 100 / num_examples
+    test_ratio = 100 / num_examples
   else:
     assert dataset_name == "bbh"
     train_ratio = 100 / num_examples
     eval_ratio = 100 / num_examples
+    test_ratio = 100 / num_examples
+  assert train_ratio + eval_ratio + test_ratio <= 1
 
   # train-validation-test split
   # It is important to sort the indices, as this ensures the is_multiple_choice
   # Boolean variables match the data points.
-  assert train_ratio + eval_ratio <= 1
-  test_ratio = 1 - train_ratio - eval_ratio
-  print(
-      f"train_ratio: {train_ratio}, eval_ratio: {eval_ratio}, "
-      f"test_ratio: {test_ratio}"
-  )
   np.random.seed(0)
   train_index = np.sort(
       np.array(
